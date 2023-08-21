@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat Application</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    form {
+        width: 95%;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #chatMessages {
+      
+    }
+
+    #messageInput {
+      width: 90%;
+      padding: 10px;
+      margin-left: 50px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #sendMessage {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .message {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border-radius: 5px;
+    }
+
+    #settingsButton {
+      padding: 10px 20px;
+      background-color: #ccc;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #settingsModal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .title {
+        color: #000;
+        size: 20px;
+    }
+
+    ::-webkit-scrollbar {
+        width: 0px;
+        color: #fff;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+    <a href="./settings.html"><button id="settingsButton">Settings</button></a>
+    <h1 class="title">Chat Room</h1>
+    <form>
+        <div id="chatMessages"></div>
+        <input type="text" id="messageInput" placeholder="Enter your message">
+        <button id="sendMessage">Send</button>
+    </form>
+  
+    <!-- Firebase JavaScript SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+  
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBZ5nIw8FRVMiGcxmtS3OP0i8rYn4F401I",
+            authDomain: "messageing-website.firebaseapp.com",
+            databaseURL: "https://messageing-website-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "messageing-website",
+            storageBucket: "messageing-website.appspot.com",
+            messagingSenderId: "356951715774",
+            appId: "1:356951715774:web:fef13a8852a7c76e4793ef",
+            measurementId: "G-7ZYVP6P1DK"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        const database = firebase.database();
+        const messagesRef = database.ref('messages');
+
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendMessageButton = document.getElementById('sendMessage');
+        const settingsButton = document.getElementById('settingsButton');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeSettingsButton = document.getElementById('closeSettings');
+
+        settingsButton.addEventListener('click', () => {
+            settingsModal.style.display = 'block';
+        });
+
+        firebase.auth().onAuthStateChanged(user => {
+            if (!user) {
+                // If the user is not signed in, redirect to the login page
+                window.location.href = 'login.html'; // Replace with the correct URL
+            }
+        });
+
+        // Function to display messages on the page
+        function displayMessage(message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message') // Add the "message" class for styling
+
+        const db = firebase.firestore();
+        db.collection('users').doc(message.userId).get()
+            .then((doc) => {
+            if (doc.exists) {
+                const username = doc.data().username;
+                messageDiv.innerHTML = `<strong>${username}:</strong> <br/> ${message.text}`;
+                chatMessages.appendChild(messageDiv);
+            }else{
+                console.error("document doesent exist")
+            }
+            window.scrollTo(0, document.body.scrollHeight)
+            })
+            .catch((error) => {
+            console.error("Error fetching username:", error);
+            });
+        }
+
+        // Listen for new messages and display them
+        messagesRef.on('child_added', snapshot => {
+        const message = snapshot.val();
+        displayMessage(message);
+        });
+
+        // Send a new message
+        sendMessageButton.addEventListener('click', () => {
+        const text = messageInput.value;
+        if (text) {
+            messagesRef.push({
+            text: text,
+            userId: firebase.auth().currentUser.uid // Store the user's UID
+            });
+            messageInput.value = '';
+        }
+        });
+    </script>
+  </body>
+</html>

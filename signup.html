@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sign Up</title>
+  <style>
+        body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    .login-container {
+      max-width: 300px;
+      margin: 100px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="username"],
+    input[type="email"],
+    input[type="password"] {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+    <div class="login-container">
+    <form id="loginForm">
+      <h2>Sign Up</h2>
+      <input type="email" id="email" placeholder="Email">
+      <input type="username" id="username" placeholder="Username">
+      <input type="password" id="password" placeholder="Password">
+      <input type="password" id="password2" placeholder="Confirm Password">
+      <button id="signupButton">Sign Up</button>
+    </form>
+    <p>Already have an account? <a href="/login.html">Login</a></p>
+  </div>
+
+  <!-- Firebase JavaScript SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script> <!-- Include Firestore library -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+
+  <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyBZ5nIw8FRVMiGcxmtS3OP0i8rYn4F401I",
+        authDomain: "messageing-website.firebaseapp.com",
+        projectId: "messageing-website",
+        storageBucket: "messageing-website.appspot.com",
+        messagingSenderId: "356951715774",
+        appId: "1:356951715774:web:fef13a8852a7c76e4793ef",
+        measurementId: "G-7ZYVP6P1DK"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    const signupForm = document.getElementById('signupForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const signupButton = document.getElementById('signupButton');
+
+    signupButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    const email = emailInput.value;
+    const password = passwordInput.value;
+    const username = document.getElementById('username').value;
+
+    if (password === document.getElementById('password2').value) {
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+        // Get the newly created user's UID
+        const userUid = userCredential.user.uid;
+
+        // Store the username in Firestore
+        const db = firebase.firestore();
+        db.collection('users').doc(userUid).set({
+            username: username
+        })
+        .then(() => {
+            // Redirect to login page on successful sign-up
+            window.location.href = `./login.html`;
+        })
+        .catch((error) => {
+            console.error("Error storing username in Firestore:", error);
+            alert("Error storing username in Firestore:", error);
+        });
+        })
+        .catch((error) => {
+        if (error.code === "auth/email-already-in-use") {
+            // Redirect to login page if email is already in use
+            window.location.href = `./login.html`;
+        } else {
+            console.error("Sign-up error:", error.code, error.message);
+            alert(error.message);
+        }
+        });
+    } else {
+        alert("Passwords don't match");
+    }
+    });
+  </script>
+</body>
+</html>

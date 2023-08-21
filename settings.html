@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Settings</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    h3 {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    form {
+      width: 95%;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #chatMessages {
+      
+    }
+
+    #messageInput {
+      width: 90%;
+      padding: 10px;
+      margin-left: 50px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #sendMessage {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .message {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border-radius: 5px;
+    }
+
+    #settingsButton {
+      padding: 10px 20px;
+      background-color: #ccc;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #settingsModal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .title {
+      color: #000;
+      size: 20px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      color: #fff;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .settings-container {
+      max-width: 12.19%;
+      margin: 100px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      grid-auto-flow: column;
+      justify-self: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="settings-container">
+    <h2>Settings</h2>
+    <button id="signOut">Sign Out</button>
+    <!--<button id="saveSettings">Save</button>-->
+    <button id="backToChat">Back to Chat</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+  <!-- Add other Firebase SDKs you need here -->
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZ5nIw8FRVMiGcxmtS3OP0i8rYn4F401I",
+      authDomain: "messageing-website.firebaseapp.com",
+      databaseURL: "https://messageing-website-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "messageing-website",
+      storageBucket: "messageing-website.appspot.com",
+      messagingSenderId: "356951715774",
+      appId: "1:356951715774:web:fef13a8852a7c76e4793ef",
+      measurementId: "G-7ZYVP6P1DK"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Your JavaScript code for the settings page
+    const signOutButton = document.getElementById('signOut');
+    const saveSettingsButton = document.getElementById('saveSettings');
+    const backToChatButton = document.getElementById('backToChat');
+
+    signOutButton.addEventListener('click', () => {
+      // Sign out the user
+      firebase.auth().signOut().then(() => {
+        alert('Signed out successfully.');
+        window.location.href = 'login.html'; // Redirect to the login page
+      }).catch(error => {
+        console.error('Sign out error:', error);
+      });
+    });
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        // If the user is not signed in, redirect to the login page
+        window.location.href = 'login.html'; // Replace with the correct URL
+      }
+    });
+
+    //saveSettingsButton.addEventListener('click', () => {
+    //  // Add your logic to save settings here
+    //  // For example, updating user preferences in Firestore, etc.
+    //  alert('Settings saved!');
+    //});
+
+    backToChatButton.addEventListener('click', () => {
+      // Redirect back to the chat page
+      window.location.href = 'index.html'; // Replace with the correct URL
+    });
+  </script>
+</body>
+</html>
