@@ -3,7 +3,7 @@
 <head>
   <title>Sign Up</title>
   <style>
-        body {
+    body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
@@ -105,7 +105,9 @@
         .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
             // Redirect to login page if email is already in use
-            window.location.href = `./login.html`;
+            // window.location.href = `./login.html`;
+            console.error("Sign-up error:", error.code, error.message);
+            alert(error.message);
         } else {
             console.error("Sign-up error:", error.code, error.message);
             alert(error.message);

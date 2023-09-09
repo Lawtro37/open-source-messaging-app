@@ -102,7 +102,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
   
     <script>
-        // replace with your test config
         const firebaseConfig = {
             apiKey: "AIzaSyBZ5nIw8FRVMiGcxmtS3OP0i8rYn4F401I",
             authDomain: "messageing-website.firebaseapp.com",
@@ -153,10 +152,10 @@
             }else{
                 console.error("document doesent exist")
             }
-            window.scrollTo(0, document.body.scrollHeight)
+              window.scrollTo(0, document.body.scrollHeight)
             })
             .catch((error) => {
-            console.error("Error fetching username:", error);
+              console.error("Error fetching username:", error);
             });
         }
 
@@ -167,15 +166,16 @@
         });
 
         // Send a new message
-        sendMessageButton.addEventListener('click', () => {
-        const text = messageInput.value;
-        if (text) {
-            messagesRef.push({
-            text: text,
-            userId: firebase.auth().currentUser.uid // Store the user's UID
-            });
-            messageInput.value = '';
-        }
+        sendMessageButton.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent the default form submission
+            const text = messageInput.value;
+            if (text) {
+                messagesRef.push({
+                    text: text,
+                    userId: firebase.auth().currentUser.uid // Store the user's UID
+                });
+                messageInput.value = '';
+            }
         });
     </script>
   </body>
